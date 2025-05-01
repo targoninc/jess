@@ -1,5 +1,5 @@
 {
-  "name": "@org/repo",
+  "name": "@targoninc/jess",
   "type": "module",
   "version": "0.0.1",
   "main": "dist/index.js",
@@ -9,7 +9,7 @@
   ],
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/org/repo.git"
+    "url": "git+https://github.com/targoninc/jess.git"
   },
   "scripts": {
     "build": "bun build ./src/index.ts --outdir ./dist --target bun --format esm && tsc",
