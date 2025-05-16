@@ -112,3 +112,11 @@ export async function computeAsync<T, Args extends any[]>(
     }
     return out;
 }
+
+export function isSignal(obj: any) {
+    return obj?.constructor === Signal;
+}
+
+export function asSignal<T>(obj: T|Signal<T>) {
+    return obj as Signal<T>;
+}
