@@ -11,6 +11,7 @@ export class Signal<T> {
     _callbacks: SignalCallback<T>[] = [];
     _value: T;
     _values: { [key: string]: Signal<T> } = {};
+    public readonly type = "jess-signal";
 
     constructor(initialValue: T, updateCallback: SignalCallback<T> = () => {
     }) {
@@ -114,7 +115,7 @@ export async function computeAsync<T, Args extends any[]>(
 }
 
 export function isSignal(obj: any) {
-    return obj?.subscribe?.constructor === Function;
+    return obj?.type === "jess-signal";
 }
 
 export function asSignal<T>(obj: T|Signal<T>) {
