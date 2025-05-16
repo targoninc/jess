@@ -4,7 +4,7 @@ import type {InputType} from "./InputType.ts";
 export type TypeOrSignal<T> = T | Signal<T>;
 export type StringOrSignal = TypeOrSignal<string>;
 export type HtmlPropertyValue = StringOrSignal | TypeOrSignal<number | boolean | null | undefined>;
-export type EventHandler<T> = ((this: GlobalEventHandlers, ev: T) => any) | Function;
+export type EventHandler<T> = ((this: GlobalEventHandlers, ev: T) => any) | Function | undefined;
 export type AnyElement = HTMLElement | SVGElement;
 export type AnyNode = DomNode | AnyElement;
 export type AnyElementFactory = () => AnyElement;
