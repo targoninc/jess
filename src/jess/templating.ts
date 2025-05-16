@@ -151,7 +151,7 @@ export class DomNode {
 
     classes(...classes: StringOrSignal[]) {
         for (let cls of classes) {
-            if (cls && isSignal(cls.constructor)) {
+            if (cls && isSignal(cls)) {
                 const sig = cls as Signal<string>;
                 let previousValue = sig.value as string;
                 this._node.classList.add(previousValue);
