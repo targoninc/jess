@@ -132,7 +132,7 @@ export class DomNode {
     }
 
     wrapProperty(property: string, value: HtmlPropertyValue) {
-        if (value && value.constructor === Signal) {
+        if (value && isSignal(value)) {
             const sig = value as Signal<string>;
             this._node[property] = sig.value;
             sig.subscribe((newValue: HtmlPropertyValue) => {
