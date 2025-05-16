@@ -114,7 +114,7 @@ export async function computeAsync<T, Args extends any[]>(
 }
 
 export function isSignal(obj: any) {
-    return obj?.subscribe.constructor === Function;
+    return obj?.subscribe?.constructor === Function;
 }
 
 export function asSignal<T>(obj: T|Signal<T>) {
