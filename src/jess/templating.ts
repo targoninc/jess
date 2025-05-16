@@ -1,4 +1,4 @@
-import {signal, Signal} from "./signals.ts";
+import {isSignal, signal, Signal} from "./signals.ts";
 import type {InputType} from "./InputType.ts";
 
 export type TypeOrSignal<T> = T | Signal<T>;
@@ -35,7 +35,7 @@ export function when(condition: any, element: AnyElement | AnyElementFactory, in
         return <AnyElement>element;
     }
 
-    if (condition && condition.constructor === Signal) {
+    if (condition && isSignal(condition)) {
         const state = signal(condition.value ? (inverted ? nullElement() : getElement()) : (inverted ? getElement() : nullElement()));
         condition.subscribe((newValue: any) => {
             if (newValue) {
@@ -151,7 +151,7 @@ export class DomNode {
 
     classes(...classes: StringOrSignal[]) {
         for (let cls of classes) {
-            if (cls && cls.constructor === Signal) {
+            if (cls && isSignal(cls.constructor)) {
                 const sig = cls as Signal<string>;
                 let previousValue = sig.value as string;
                 this._node.classList.add(previousValue);
@@ -176,7 +176,7 @@ export class DomNode {
             for (let i = 0; i < arguments.length; i += 2) {
                 const key = arguments[i];
                 const value = arguments[i + 1];
-                if (value && value.constructor === Signal) {
+                if (value && isSignal(value)) {
                     this._node.setAttribute(key, value.value);
                     value.onUpdate = (newValue: string) => {
                         this._node.setAttribute(key, newValue);
@@ -217,7 +217,7 @@ export class DomNode {
                 this._node.appendChild(node);
             } else if (node instanceof DomNode) {
                 this._node.appendChild(node.build());
-            } else if (node && node.constructor === Signal) {
+            } else if (node && isSignal(node)) {
                 node.subscribe((newValue: AnyNode) => {
                     if (isValidElement(newValue)) {
                         this._node.replaceChild(newValue as AnyElement, childNode);
@@ -634,7 +634,7 @@ export class DomNode {
                 if (key.constructor !== String) {
                     throw new Error('Invalid key type for styles. Must be a string.');
                 }
-                if (value && value.constructor === Signal) {
+                if (value && isSignal(value)) {
                     // @ts-ignore
                     this._node.style[key] = value.value;
                     value.onUpdate = (newValue: any) => {
