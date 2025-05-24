@@ -762,4 +762,10 @@ export class DomNode {
         this.wrapProperty('novalidate', novalidate);
         return this;
     }
+
+    popover(id: HtmlPropertyValue) {
+        this.id(id);
+        this.wrapProperty('popover', '');
+        return this;
+    }
 }
