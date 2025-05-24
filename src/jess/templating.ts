@@ -763,9 +763,8 @@ export class DomNode {
         return this;
     }
 
-    popover(id: HtmlPropertyValue) {
-        this.id(id);
-        this.wrapProperty('popover', '');
+    popover(popover: TypeOrSignal<"auto"|"hint"|"manual">) {
+        this.wrapProperty('popover', popover as HtmlPropertyValue);
         return this;
     }
 }
