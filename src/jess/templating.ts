@@ -763,7 +763,7 @@ export class DomNode {
         return this;
     }
 
-    popover(popover: TypeOrSignal<"auto"|"hint"|"manual">) {
+    popover(popover?: TypeOrSignal<"auto"|"hint"|"manual"|"">) {
         this.wrapProperty('popover', popover as HtmlPropertyValue);
         return this;
     }
