@@ -119,5 +119,8 @@ export function isSignal(obj: any) {
 }
 
 export function asSignal<T>(obj: T|Signal<T>) {
+    if (!isSignal(obj)) {
+        return signal(obj);
+    }
     return obj as Signal<T>;
 }
