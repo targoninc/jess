@@ -1,8 +1,14 @@
 {
   "name": "docs",
-  "module": "index.ts",
+  "module": "src/ui/server.ts",
   "type": "module",
   "private": true,
+  "scripts": {
+    "build-dev": "bun build src/ui/server.ts --outdir ./out --sourcemap=linked --watch",
+    "start-dev": "bun --watch src/index.ts",
+    "build-prod": "bun build src/ui/server.ts --outdir ./out --sourcemap=linked --minify",
+    "start-prod": "bun src/index.ts"
+  },
   "devDependencies": {
     "@types/bun": "latest"
   },
