@@ -1,12 +1,12 @@
 {
   "name": "docs",
-  "module": "src/ui/server.ts",
+  "module": "src/server/server.ts",
   "type": "module",
   "private": true,
   "scripts": {
-    "build-dev": "bun build src/ui/server.ts --outdir ./out --sourcemap=linked --watch",
+    "build-dev": "bun build src/server/server.ts --outdir ./out --sourcemap=linked --watch",
     "start-dev": "bun --watch src/index.ts",
-    "build-prod": "bun build src/ui/server.ts --outdir ./out --sourcemap=linked --minify",
+    "build-prod": "bun build src/server/server.ts --outdir ./out --sourcemap=linked --minify",
     "start-prod": "bun src/index.ts"
   },
   "devDependencies": {

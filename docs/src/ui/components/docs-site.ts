@@ -9,9 +9,9 @@ function parseMarkdown(text: string) {
     return DOMPurify.sanitize(rawMdParsed);
 }
 
-export function site(content: string) {
+export function docsSite(content: string) {
     return create("div")
-        .classes("site")
+        .classes("docsSite")
         .html(parseMarkdown(content))
         .build();
 }
