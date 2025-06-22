@@ -59,7 +59,7 @@ const server = serve({
         for (const dir of staticFiles) {
             const staticFilePath = path.join(dir, pathname.slice(1)); // Remove leading "/"
 
-            if (await Bun.file(staticFilePath).exists()) {
+            if (await file(staticFilePath).exists()) {
                 const mimeType = getMimeType(staticFilePath);
 
                 return new Response(await file(staticFilePath).arrayBuffer(), {

@@ -1,8 +1,43 @@
 .app {
     padding: var(--gap-v);
+    max-height: 100dvh;
+    overflow: auto;
 }
 
 .content {
     max-width: 960px;
     margin: 0 auto;
+}
+
+.page {
+    margin-top: 5em;
+}
+
+.sidebar {
+    position: fixed;
+}
+
+.navbar {
+    backdrop-filter: blur(10px);
+    border-radius: var(--input-border-radius);
+    position: fixed;
+    width: calc(100% - 2 * var(--gap-v));
+    padding: var(--gap-v);
+    border: 1px solid var(--bg-4);
+}
+
+.sidebar-link-children {
+    margin-left: var(--gap-v);
+}
+
+.sidebar-link {
+    padding: .5em;
+    border-radius: var(--input-border-radius);
+    width: 100%;
+}
+
+.sidebar-link:hover {
+    border: 1px solid var(--bg-4);
+    text-decoration: none !important;
+    background: var(--bg-2);
 }

@@ -10,7 +10,7 @@
     "start-prod": "bun src/server/server.ts"
   },
   "devDependencies": {
-    "@types/bun": "latest"
+    "@types/bun": "^1.2.17"
   },
   "peerDependencies": {
     "typescript": "^5"

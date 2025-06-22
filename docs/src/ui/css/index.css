@@ -37,7 +37,7 @@
     --jessc-gap: var(--gap-h);
     --input-padding-h: 0.75rem;
     --input-padding-v: 0.25rem;
-    --input-border-radius: 1em;
+    --input-border-radius: .5em;
     --attachment-border-radius: .5em;
     --input-border-width: 1px;
     --avatar-border-width: 2px;
@@ -84,8 +84,6 @@ body {
     background: var(--gradient-1);
     color: var(--text);
     font-size: var(--font-size-base);
-    margin: 0;
-    padding: 0;
 }
 
 p {

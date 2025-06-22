@@ -4,7 +4,7 @@ import {navbar} from "./navbar.ts";
 
 export function app() {
     return create("div")
-        .classes("app")
+        .classes("app", "relative")
         .children(
             navbar(),
             page()

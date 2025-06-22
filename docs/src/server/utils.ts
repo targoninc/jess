@@ -2,6 +2,7 @@ import {MIME_TYPES} from "./MIME_TYPES.ts";
 import type {PageInfo} from "../ui/pageInfo.ts";
 import fs from "fs";
 import path from "path";
+import { file } from "bun";
 
 const filesDir = path.join(process.cwd(), "src/files");
 
@@ -32,9 +33,9 @@ export async function getPages(dir: string = filesDir): Promise<PageInfo[]> {
 
     const pages: PageInfo[] = [];
 
-    for (const file of markdownFiles) {
-        const filePath = path.join(dir, file);
-        const content = await Bun.file(filePath).text();
+    for (const mdFile of markdownFiles) {
+        const filePath = path.join(dir, mdFile);
+        const content = await file(filePath).text();
         const title = getTitleFromMarkdown(content);
 
         const relativePath = path.relative(filesDir, filePath);
@@ -42,7 +43,7 @@ export async function getPages(dir: string = filesDir): Promise<PageInfo[]> {
         pages.push({
             title,
             filename: relativePath,
-            children: file === "index.md" ? await getChildren(folders) : []
+            children: mdFile === "index.md" ? await getChildren(folders) : []
         });
     }
 
@@ -55,8 +56,8 @@ export async function getPageContent(filename: string): Promise<string> {
     }
 
     const targetFile = path.join(filesDir, filename);
-    if (await Bun.file(targetFile).exists()) {
-        return await Bun.file(targetFile).text();
+    if (await file(targetFile).exists()) {
+        return await file(targetFile).text();
     }
 
     return "# Page Not Found\n\nThe requested page could not be found.";

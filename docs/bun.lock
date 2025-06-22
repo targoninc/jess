@@ -11,7 +11,7 @@
         "marked": "^15.0.12",
       },
       "devDependencies": {
-        "@types/bun": "latest",
+        "@types/bun": "^1.2.17",
       },
       "peerDependencies": {
         "typescript": "^5",
