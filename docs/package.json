@@ -20,6 +20,7 @@
     "@targoninc/jess-components": "^0.0.16",
     "dompurify": "^3.2.6",
     "dotenv": "^16.5.0",
+    "highlight.js": "^11.11.1",
     "marked": "^15.0.12"
   }
 }

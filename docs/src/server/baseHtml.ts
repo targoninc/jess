@@ -29,6 +29,7 @@ export async function baseHtml(req: Request) {
     
     <link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/gh/targoninc/jess-components@0.0.8/src/src/jess-components.css"/>
     
+    <link rel="stylesheet" type="text/css" href="/css/hljs-an-old-hope.css"/>
     <link rel="stylesheet" type="text/css" href="/css/reset.css"/>
     <link rel="stylesheet" type="text/css" href="/css/index.css"/>
     <link rel="stylesheet" type="text/css" href="/css/components.css"/>

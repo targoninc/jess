@@ -41,3 +41,16 @@
     text-decoration: none !important;
     background: var(--bg-2);
 }
+
+.sidebar-link.active {
+    text-decoration: none !important;
+    background: var(--bg-2);
+}
+
+pre {
+    border-radius: var(--input-border-radius);
+    overflow: auto;
+    margin: var(--gap-v) 0;
+    padding: var(--gap-v);
+    background: #1C1D21;
+}

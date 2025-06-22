@@ -7,7 +7,7 @@ function toLink(page: PageInfo) {
 }
 
 export function sidebarLink(page: PageInfo): AnyElement {
-    const isActive = compute(p => p === page.title, currentPage);
+    const isActive = compute(p => p === page.filename, currentPage);
     const active = compute((a): string => a ? "active" : "_", isActive);
 
     return create("div")
@@ -16,6 +16,12 @@ export function sidebarLink(page: PageInfo): AnyElement {
             create("a")
                 .classes("sidebar-link", active)
                 .text(page.title)
+                .onclick((e: MouseEvent) => {
+                    if (e.button === 0) {
+                        currentPage.value = page.filename;
+                        e.preventDefault();
+                    }
+                })
                 .href(toLink(page)),
             create("div")
                 .classes("sidebar-link-children", "flex-v", "no-gap")

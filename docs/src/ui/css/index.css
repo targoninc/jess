@@ -84,6 +84,7 @@ body {
     background: var(--gradient-1);
     color: var(--text);
     font-size: var(--font-size-base);
+    line-height: 1.5;
 }
 
 p {
