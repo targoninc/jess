@@ -3,7 +3,7 @@ import {type AnyElement, compute, create} from "@targoninc/jess";
 import {currentPage} from "../state.ts";
 
 function toLink(title: string) {
-    return `#${title.toLowerCase().replace(/ /g, "-")}`;
+    return `/?page=${title.toLowerCase().replace(/ /g, "-")}`;
 }
 
 export function sidebarLink(page: PageInfo): AnyElement {

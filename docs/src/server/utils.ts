@@ -17,22 +17,29 @@ export function getTitleFromMarkdown(content: string): string {
     return titleMatch ? (titleMatch[1] ?? "Untitled") : "Untitled";
 }
 
-export async function getPages(): Promise<PageInfo[]> {
-    const files = await fs.promises.readdir(filesDir);
-    const markdownFiles = files.filter(file => file.endsWith('.md'));
+async function getChildren(folders: string[]) {
+    const children = [];
+    for (const folder of folders) {
+        children.push(...await getPages(folder))
+    }
+    return children;
+}
 
-    // For now, we have a simple structure with just the index file
+export async function getPages(dir: string = filesDir): Promise<PageInfo[]> {
+    const files = await fs.promises.readdir(dir);
+    const markdownFiles = files.filter(file => file.endsWith('.md'));
+    const folders = files.filter(file => !file.includes(".")).map(f => path.join(dir, f));
+
     const pages: PageInfo[] = [];
 
     for (const file of markdownFiles) {
-        const filePath = path.join(filesDir, file);
+        const filePath = path.join(dir, file);
         const content = await Bun.file(filePath).text();
         const title = getTitleFromMarkdown(content);
 
-        // Create a simple PageInfo structure
         pages.push({
             title,
-            children: []
+            children: file === "index.md" ? await getChildren(folders) : []
         });
     }
 

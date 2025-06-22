@@ -10,8 +10,8 @@ function parseMarkdown(text: string) {
 }
 
 export function docsSite(content: string) {
-    return create("div")
-        .classes("docsSite")
+    return create("article")
+        .classes("content")
         .html(parseMarkdown(content))
         .build();
 }

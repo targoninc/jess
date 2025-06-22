@@ -60,7 +60,6 @@ const server = serve({
         for (const dir of staticFiles) {
             const staticFilePath = path.join(dir, pathname.slice(1)); // Remove leading "/"
 
-            console.log(staticFilePath);
             if (await Bun.file(staticFilePath).exists()) {
                 const mimeType = getMimeType(staticFilePath);
 

@@ -1,6 +1,6 @@
 :root {
-    --tint: #0000ff;
-    --tint-strength: 20%;
+    --tint: #2d2d7d;
+    --tint-strength: 5%;
     --black: color-mix(in oklab, #101010, var(--tint) var(--tint-strength));
     --black-2: color-mix(in oklab, #202020, var(--tint) var(--tint-strength));
     --black-3: color-mix(in oklab, #303030, var(--tint) var(--tint-strength));;

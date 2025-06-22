@@ -29,10 +29,9 @@ export async function baseHtml(req: Request) {
     
     <link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/gh/targoninc/jess-components@0.0.8/src/src/jess-components.css"/>
     
-    <link rel="stylesheet" type="text/css" href="/styles/style.css"/>
-    <link rel="stylesheet" type="text/css" href="/styles/elements.css"/>
-    <link rel="stylesheet" type="text/css" href="/styles/dark.css"/>
-    <link rel="stylesheet" type="text/css" href="/styles/shared_targon.css"/>
+    <link rel="stylesheet" type="text/css" href="/css/reset.css"/>
+    <link rel="stylesheet" type="text/css" href="/css/index.css"/>
+    <link rel="stylesheet" type="text/css" href="/css/components.css"/>
     
     <meta name="twitter:card" content="summary_large_image"/>
     <meta name="twitter:description" content="${description}"/>
