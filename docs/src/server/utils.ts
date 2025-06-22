@@ -37,8 +37,11 @@ export async function getPages(dir: string = filesDir): Promise<PageInfo[]> {
         const content = await Bun.file(filePath).text();
         const title = getTitleFromMarkdown(content);
 
+        const relativePath = path.relative(filesDir, filePath);
+
         pages.push({
             title,
+            filename: relativePath,
             children: file === "index.md" ? await getChildren(folders) : []
         });
     }
@@ -46,21 +49,15 @@ export async function getPages(dir: string = filesDir): Promise<PageInfo[]> {
     return pages;
 }
 
-export async function getPageContent(pageName: string): Promise<string> {
-    const files = await fs.promises.readdir(filesDir);
-    const markdownFiles = files.filter(file => file.endsWith('.md'));
-
-    for (const file of markdownFiles) {
-        const filePath = path.join(filesDir, file);
-        const content = await Bun.file(filePath).text();
-        const title = getTitleFromMarkdown(content);
-
-        // If the title matches the requested page, return the content
-        if (title === pageName) {
-            return content;
-        }
+export async function getPageContent(filename: string): Promise<string> {
+    if (filename.includes("..")) {
+        return "# Page Not Found\n\nThe requested page could not be found.";
     }
 
-    // If no matching page is found, return a default message
+    const targetFile = path.join(filesDir, filename);
+    if (await Bun.file(targetFile).exists()) {
+        return await Bun.file(targetFile).text();
+    }
+
     return "# Page Not Found\n\nThe requested page could not be found.";
-};
+}

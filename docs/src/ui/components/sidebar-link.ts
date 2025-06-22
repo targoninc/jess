@@ -2,8 +2,8 @@ import type {PageInfo} from "../pageInfo.ts";
 import {type AnyElement, compute, create} from "@targoninc/jess";
 import {currentPage} from "../state.ts";
 
-function toLink(title: string) {
-    return `/?page=${title.toLowerCase().replace(/ /g, "-")}`;
+function toLink(page: PageInfo) {
+    return `/?page=${encodeURIComponent(page.filename)}`;
 }
 
 export function sidebarLink(page: PageInfo): AnyElement {
@@ -15,7 +15,7 @@ export function sidebarLink(page: PageInfo): AnyElement {
             create("a")
                 .classes("sidebar-link", active)
                 .text(page.title)
-                .href(toLink(page.title)),
+                .href(toLink(page)),
             create("div")
                 .classes("sidebar-link-children")
                 .children(
