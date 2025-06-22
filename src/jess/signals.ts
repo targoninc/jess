@@ -9,15 +9,14 @@ export type SignalCallback<T> = (newValue: T, changed: boolean) => void;
 
 export class Signal<T> {
     _callbacks: SignalCallback<T>[] = [];
+    _keyCallbacks: Map<string, SignalCallback<T>> = new Map();
     _value: T;
     _values: { [key: string]: Signal<T> } = {};
     public readonly type = "jess-signal";
 
-    constructor(initialValue: T, updateCallback: SignalCallback<T> = () => {
-    }) {
+    constructor(initialValue: T) {
         this._value = initialValue;
         this._values = {};
-        this._callbacks.push(updateCallback);
     }
 
     /**
@@ -44,8 +43,12 @@ export class Signal<T> {
         this._callbacks = [];
     }
 
-    subscribe(callback: SignalCallback<T>) {
-        this._callbacks.push(callback);
+    subscribe(callback: SignalCallback<T>, key?: string|null) {
+        if (key !== undefined && key !== null) {
+            this._keyCallbacks.set(key, callback);
+        } else {
+            this._callbacks.push(callback);
+        }
     }
 
     unsubscribe(callback: SignalCallback<T>) {
@@ -53,14 +56,16 @@ export class Signal<T> {
         if (index >= 0) {
             this._callbacks.splice(index, 1);
         }
+
+        for (const [key, func] of Object.entries(this._keyCallbacks)) {
+            if (func === callback) {
+                this.unsubscribeKey(key);
+            }
+        }
     }
 
-    get onUpdate(): SignalCallback<T>[] {
-        return this._callbacks;
-    }
-
-    set onUpdate(callback: SignalCallback<T>) {
-        this._callbacks.push(callback);
+    unsubscribeKey(key: string) {
+        this._keyCallbacks.delete(key);
     }
 
     get value(): T {
@@ -71,6 +76,10 @@ export class Signal<T> {
         const changed = this._value !== value;
         this._value = value;
         this._callbacks.forEach(callback => callback(value, changed));
+
+        for (const [_, callback] of this._keyCallbacks.entries()) {
+            callback(value, changed);
+        }
     }
 }
 

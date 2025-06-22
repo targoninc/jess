@@ -58,3 +58,33 @@ counter.value = 1; // the .subscribe() function above will not log, because the 
 const container = document.body;
 container.appendChild(create("span").text(counterText).build());
 ```
+
+## Testing
+
+This project uses Vitest for testing. Here's how to run the tests:
+
+```bash
+# Run tests once
+bun test
+
+# Run tests in watch mode (rerun on file changes)
+bun test:watch
+
+# Run tests with UI
+bun test:ui
+```
+
+To create a new test, add a file with the `.test.ts` or `.spec.ts` extension next to the file you want to test.
+
+Example:
+```typescript
+import { describe, it, expect } from 'vitest';
+import { signal } from '@targoninc/jess';
+
+describe('Signal', () => {
+  it('should create a signal with initial value', () => {
+    const count = signal(0);
+    expect(count.value).toBe(0);
+  });
+});
+```

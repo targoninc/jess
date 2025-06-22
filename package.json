@@ -14,12 +14,17 @@
   "scripts": {
     "build": "bun build ./src/index.ts --outdir ./dist --target bun --format esm && tsc",
     "typecheck": "tsc --noEmit",
-    "prepublishOnly": "bun run build"
+    "prepublishOnly": "bun run build",
+    "test": "vitest run",
+    "test:watch": "vitest",
+    "test:ui": "vitest --ui"
   },
   "dependencies": {},
   "devDependencies": {
     "@types/bun": "latest",
-    "bun-plugin-dtsx": "^0.21.9"
+    "bun-plugin-dtsx": "^0.21.9",
+    "vitest": "^1.0.0",
+    "@vitest/ui": "^1.0.0"
   },
   "peerDependencies": {
     "typescript": "^5"
