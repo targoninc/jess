@@ -54,6 +54,21 @@ describe('Signal', () => {
 
     expect(first).toHaveBeenCalledTimes(0);
   });
+
+  it('should track changes', () => {
+    const count = signal(0);
+    let changeCount = 0;
+
+    count.subscribe((_, changed) => {
+      if (changed) {
+        changeCount++;
+      }
+    });
+    count.value = 0;
+    count.value = 1;
+
+    expect(changeCount).toEqual(1);
+  });
 });
 
 describe('compute', () => {
