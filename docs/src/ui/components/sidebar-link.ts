@@ -1,9 +1,13 @@
 import type {PageInfo} from "../pageInfo.ts";
-import {type AnyElement, create} from "@targoninc/jess/dist/src";
+import {type AnyElement, compute, create} from "@targoninc/jess/dist/src";
+import {currentPage} from "../state.ts";
 
 export function sidebarLink(page: PageInfo): AnyElement {
+    const isActive = compute(p => p === page.title, currentPage);
+    const active = compute((a): string => a ? "active" : "_", isActive);
+
     return create("div")
-        .classes("sidebarLink")
+        .classes("sidebarLink", active)
         .children(
             create("a")
                 .classes("sidebar-link")

@@ -5,6 +5,7 @@
       "name": "docs",
       "dependencies": {
         "@targoninc/jess": "^0.0.16",
+        "@targoninc/jess-components": "^0.0.15",
         "dompurify": "^3.2.6",
         "marked": "^15.0.12",
       },
@@ -18,6 +19,8 @@
   },
   "packages": {
     "@targoninc/jess": ["@targoninc/jess@0.0.16", "", { "peerDependencies": { "typescript": "^5" } }, "sha512-cKEkPsKQ9PfosdytFm1VMOGwjikRFpPmDWxPVnMTctPk9NNhp2zcNz7U9pM92RD35BbtsbVeBn8p/Mo7cJ5Vuw=="],
+
+    "@targoninc/jess-components": ["@targoninc/jess-components@0.0.15", "", { "dependencies": { "@targoninc/jess": "^0.0.15" }, "peerDependencies": { "typescript": "^5" } }, "sha512-wdqT92eWzMhp9Ae0GWX2rT8I6Kwwm7d3aBOQ3hoFJ7pesMf1IBXuEVE0uqgElRbHilhv2lJou9Bmy/YoMwiHfw=="],
 
     "@types/bun": ["@types/bun@1.2.17", "", { "dependencies": { "bun-types": "1.2.17" } }, "sha512-l/BYs/JYt+cXA/0+wUhulYJB6a6p//GTPiJ7nV+QHa8iiId4HZmnu/3J/SowP5g0rTiERY2kfGKXEK5Ehltx4Q=="],
 
@@ -34,5 +37,7 @@
     "typescript": ["typescript@5.8.3", "", { "bin": { "tsc": "bin/tsc", "tsserver": "bin/tsserver" } }, "sha512-p1diW6TqL9L07nNxvRMM7hMMw4c5XOo/1ibL4aAIGmSAt9slTE1Xgw5KWuof2uTOvCg9BY7ZRi+GaF+7sfgPeQ=="],
 
     "undici-types": ["undici-types@7.8.0", "", {}, "sha512-9UJ2xGDvQ43tYyVMpuHlsgApydB8ZKfVYTsLDhXkFL/6gfkp+U8xTGdh8pMJv1SpZna0zxG1DwsKZsreLbXBxw=="],
+
+    "@targoninc/jess-components/@targoninc/jess": ["@targoninc/jess@0.0.15", "", { "peerDependencies": { "typescript": "^5" } }, "sha512-JIJuoc3Ewk+6y4MCfZCGRoGXtnB3MxHj9iG+HQ7to9r/bM08x9jwJ2rLfFtA/d7ZdAcnQWzGl57DRWNpfNe9Qw=="],
   }
 }
