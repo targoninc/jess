@@ -1,6 +1,6 @@
 import {marked} from "marked";
 import DOMPurify from 'dompurify';
-import {create} from "@targoninc/jess/dist/src";
+import {create} from "@targoninc/jess";
 
 function parseMarkdown(text: string) {
     const rawMdParsed = marked.parse(text, {

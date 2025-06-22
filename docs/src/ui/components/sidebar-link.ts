@@ -1,5 +1,5 @@
 import type {PageInfo} from "../pageInfo.ts";
-import {type AnyElement, compute, create} from "@targoninc/jess/dist/src";
+import {type AnyElement, compute, create} from "@targoninc/jess";
 import {currentPage} from "../state.ts";
 
 function toLink(title: string) {

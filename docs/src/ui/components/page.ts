@@ -1,4 +1,4 @@
-import {compute, create} from "@targoninc/jess/dist/src";
+import {compute, create} from "@targoninc/jess";
 import {docsSite} from "./docs-site.ts";
 import {currentPageContent, pages} from "../state.ts";
 import {sidebar} from "./sidebar.ts";

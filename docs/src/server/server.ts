@@ -2,8 +2,7 @@ import {file, serve} from "bun";
 import {baseHtml} from "./baseHtml.ts";
 import {config} from "dotenv";
 import * as path from "path";
-import {MIME_TYPES} from "./MIME_TYPES.ts";
-
+import {getMimeType, getPageContent, getPages} from "./utils.ts";
 config();
 
 console.log(process.cwd());
@@ -11,25 +10,57 @@ console.log(process.cwd());
 const outDir = path.join(process.cwd(), "out");
 const uiDir = path.join(process.cwd(), "src/ui");
 
-const getMimeType = (filepath: string): string => {
-    const getFileExtension = (path: string): string =>
-        path.split('.').pop()?.toLowerCase() || "";
-    const extension = getFileExtension(filepath);
-    return MIME_TYPES[extension] || "text/plain";
-};
-
-// Bun server handler
 const server = serve({
     port: parseInt(process.env.PORT || "3000"),
     async fetch(req) {
         const url = new URL(req.url);
         const pathname = url.pathname;
+        console.log(pathname);
 
-        // Handle static files from "out" and "src/ui" directories
+        if (pathname === "/api/pages") {
+            try {
+                const pages = await getPages();
+                return new Response(JSON.stringify(pages), { 
+                    headers: { "Content-Type": "application/json" } 
+                });
+            } catch (error) {
+                console.error("Error loading pages:", error);
+                return new Response(JSON.stringify([]), { 
+                    headers: { "Content-Type": "application/json" },
+                    status: 500
+                });
+            }
+        }
+
+        if (pathname === "/api/page-content") {
+            try {
+                const page = url.searchParams.get("page");
+
+                if (!page) {
+                    return new Response(JSON.stringify("# Welcome to Jess\n\nA framework only as complex as needed."), { 
+                        headers: { "Content-Type": "application/json" } 
+                    });
+                }
+
+                const content = await getPageContent(page);
+
+                return new Response(JSON.stringify(content), { 
+                    headers: { "Content-Type": "application/json" } 
+                });
+            } catch (error) {
+                console.error("Error loading page content:", error);
+                return new Response(JSON.stringify("# Error\n\nAn error occurred while loading the page content."), { 
+                    headers: { "Content-Type": "application/json" },
+                    status: 500
+                });
+            }
+        }
+
         const staticFiles = [outDir, uiDir];
         for (const dir of staticFiles) {
             const staticFilePath = path.join(dir, pathname.slice(1)); // Remove leading "/"
 
+            console.log(staticFilePath);
             if (await Bun.file(staticFilePath).exists()) {
                 const mimeType = getMimeType(staticFilePath);
 
@@ -37,11 +68,6 @@ const server = serve({
                     headers: { "Content-Type": mimeType },
                 });
             }
-        }
-
-        if (pathname === "/api-url") {
-            const apiUrl = process.env.API_URL ?? "https://api.lyda.app";
-            return new Response(apiUrl, { headers: { "Content-Type": "text/plain" } });
         }
 
         // Handle dynamic routes (fallback to baseHtml render)

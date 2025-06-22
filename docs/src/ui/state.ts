@@ -1,4 +1,4 @@
-import {signal} from "@targoninc/jess/dist/src";
+import {signal} from "@targoninc/jess";
 import type {PageInfo} from "./pageInfo.ts";
 import {Api} from "./lib/api.ts";
 

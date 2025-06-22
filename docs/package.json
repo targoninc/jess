@@ -4,9 +4,9 @@
   "type": "module",
   "private": true,
   "scripts": {
-    "build-dev": "bun build src/server/server.ts --outdir ./out --sourcemap=linked --watch --target bun",
+    "build-dev": "bun build src/ui/index.ts --outdir ./out --sourcemap=linked --watch",
     "start-dev": "bun --watch src/server/server.ts",
-    "build-prod": "bun build src/server/server.ts --outdir ./out --sourcemap=linked --minify --target bun",
+    "build-prod": "bun build src/ui/index.ts --outdir ./out --sourcemap=linked --minify",
     "start-prod": "bun src/server/server.ts"
   },
   "devDependencies": {

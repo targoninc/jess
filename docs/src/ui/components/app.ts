@@ -1,4 +1,4 @@
-import {create} from "@targoninc/jess/dist/src";
+import {create} from "@targoninc/jess";
 import {page} from "./page.ts";
 import {navbar} from "./navbar.ts";
 

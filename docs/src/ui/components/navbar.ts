@@ -1,4 +1,4 @@
-import {create, InputType, signal} from "@targoninc/jess/dist/src";
+import {create, InputType, signal} from "@targoninc/jess";
 import {input} from "@targoninc/jess-components";
 
 export function navbar() {
