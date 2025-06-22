@@ -1,10 +1,12 @@
-import {signal} from "@targoninc/jess";
+import {signal, compute} from "@targoninc/jess";
 import type {PageInfo} from "./pageInfo.ts";
 import {Api} from "./lib/api.ts";
 
 export const pages = signal<PageInfo[]>([]);
 export const currentPage = signal<string>("");
 export const currentPageContent = signal<string>("");
+export const search = signal("");
+export const filteredPages = compute((ps, s) => ps.filter(p => p.title.toLowerCase().includes(s.toLowerCase())), pages, search);
 
 function getCurrentPage() {
     const url = new URL(window.location.href);
