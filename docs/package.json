@@ -14,5 +14,10 @@
   },
   "peerDependencies": {
     "typescript": "^5"
+  },
+  "dependencies": {
+    "@targoninc/jess": "^0.0.16",
+    "dompurify": "^3.2.6",
+    "marked": "^15.0.12"
   }
 }
