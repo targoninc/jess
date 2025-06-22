@@ -4,10 +4,10 @@
   "type": "module",
   "private": true,
   "scripts": {
-    "build-dev": "bun build src/server/server.ts --outdir ./out --sourcemap=linked --watch",
-    "start-dev": "bun --watch src/index.ts",
-    "build-prod": "bun build src/server/server.ts --outdir ./out --sourcemap=linked --minify",
-    "start-prod": "bun src/index.ts"
+    "build-dev": "bun build src/server/server.ts --outdir ./out --sourcemap=linked --watch --target bun",
+    "start-dev": "bun --watch src/server/server.ts",
+    "build-prod": "bun build src/server/server.ts --outdir ./out --sourcemap=linked --minify --target bun",
+    "start-prod": "bun src/server/server.ts"
   },
   "devDependencies": {
     "@types/bun": "latest"
@@ -19,6 +19,7 @@
     "@targoninc/jess": "^0.0.16",
     "@targoninc/jess-components": "^0.0.16",
     "dompurify": "^3.2.6",
+    "dotenv": "^16.5.0",
     "marked": "^15.0.12"
   }
 }
