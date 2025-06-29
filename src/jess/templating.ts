@@ -178,9 +178,9 @@ export class DomNode {
                 const value = arguments[i + 1];
                 if (value && isSignal(value)) {
                     this._node.setAttribute(key, value.value);
-                    value.onUpdate = (newValue: string) => {
+                    value.subscribe((newValue: string) => {
                         this._node.setAttribute(key, newValue);
-                    };
+                    });
                 } else {
                     this._node.setAttribute(key, value);
                 }
@@ -637,10 +637,10 @@ export class DomNode {
                 if (value && isSignal(value)) {
                     // @ts-ignore
                     this._node.style[key] = value.value;
-                    value.onUpdate = (newValue: any) => {
+                    value.subscribe((newValue: any) => {
                         // @ts-ignore
                         this._node.style[key] = newValue;
-                    };
+                    });
                 } else {
                     // @ts-ignore
                     this._node.style[key] = value;
