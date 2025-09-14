@@ -81,6 +81,11 @@ export class Signal<T> {
             callback(value, changed);
         }
     }
+
+    toString() {
+        // @ts-ignore
+        return this._value.toString();
+    }
 }
 
 export function signal<T>(initialValue: T) {
