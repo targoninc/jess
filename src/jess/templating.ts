@@ -61,7 +61,7 @@ export function signalMap<T>(arrayState: Signal<T[]>, wrapper: DomNode, callback
         if (!newValue) {
             return;
         }
-        const tmp: T[] = [...newValue].filter(t => !!t);
+        const tmp: T[] = [...newValue].filter(t => t !== undefined && t !== null);
         const children = [];
         if (renderSequentially) {
             wrapper.overwriteChildren();
