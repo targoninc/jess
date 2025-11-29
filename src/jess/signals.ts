@@ -23,7 +23,7 @@ export class Signal<T> {
      * Creates an object with boolean signals that update when {this} updates.
      * @param assignments {Object} e.g. { someKey: { onTrue: value1, onFalse: value2 } }
      */
-    boolValues(assignments: BoolValueAssignments<T> = {}) {
+    boolValues(assignments: BoolValueAssignments<T> = {}): { [p: string]: Signal<T> } {
         for (let key in assignments) {
             if (assignments[key]) {
                 this._values[key] = signal<T>(this._value ? assignments[key].onTrue : assignments[key].onFalse);
@@ -82,13 +82,13 @@ export class Signal<T> {
         }
     }
 
-    toString() {
+    toString(): string {
         // @ts-ignore
         return this._value.toString();
     }
 }
 
-export function signal<T>(initialValue: T) {
+export function signal<T>(initialValue: T): Signal<T> {
     return new Signal<T>(initialValue);
 }
 
@@ -128,11 +128,11 @@ export async function computeAsync<T, Args extends any[]>(
     return out;
 }
 
-export function isSignal(obj: any) {
+export function isSignal(obj: any): boolean {
     return obj?.type === "jess-signal";
 }
 
-export function asSignal<T>(obj: T|Signal<T>) {
+export function asSignal<T>(obj: T|Signal<T>): Signal<Signal<T> | T> | Signal<T> {
     if (!isSignal(obj)) {
         return signal(obj);
     }

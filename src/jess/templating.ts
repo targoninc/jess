@@ -19,15 +19,15 @@ export type SettableCss = {
 };
 export type CssClass = Partial<SettableCss>;
 
-export function create(tag: string) {
+export function create(tag: string): DomNode {
     return new DomNode(tag);
 }
 
-export function nullElement() {
+export function nullElement(): HTMLElement | SVGElement {
     return create("div").styles("display", "none").build();
 }
 
-export function when(condition: any, element: AnyElement | AnyElementFactory, inverted = false) {
+export function when(condition: any, element: AnyElement | AnyElementFactory, inverted = false): HTMLElement | SVGElement | Signal<HTMLElement | SVGElement> {
     function getElement(): AnyElement {
         if (element.constructor === Function) {
             return (<AnyElementFactory>element)();
@@ -82,11 +82,11 @@ export function signalMap<T>(arrayState: Signal<T[]>, wrapper: DomNode, callback
     return wrapper.build();
 }
 
-export function stack(message: string, debugInfo = {}) {
+export function stack(message: string, debugInfo = {}): void {
     console.warn(message, { debugInfo }, (new Error()).stack);
 }
 
-export function isValidElement(element: any) {
+export function isValidElement(element: any): boolean {
     const validTypes = [HTMLElement, SVGElement];
     return validTypes.some(type => element instanceof type);
 }
@@ -114,7 +114,7 @@ export class DomNode {
         }
     }
 
-    applyGenericConfig(config: any) {
+    applyGenericConfig(config: any): this {
         return this.classes("jess", ...(config.classes ?? []))
             .attributes(...(config.attributes ?? []))
             .styles(...(config.styles ?? []))
@@ -131,7 +131,7 @@ export class DomNode {
         return this._node;
     }
 
-    wrapProperty(property: string, value: HtmlPropertyValue) {
+    wrapProperty(property: string, value: HtmlPropertyValue): void {
         if (value && isSignal(value)) {
             const sig = value as Signal<string>;
             this._node[property] = sig.value;
@@ -145,11 +145,11 @@ export class DomNode {
         }
     }
 
-    class(className: string) {
+    class(className: string): this {
         return this.classes(className);
     }
 
-    classes(...classes: StringOrSignal[]) {
+    classes(...classes: StringOrSignal[]): this {
         for (let cls of classes) {
             if (cls && isSignal(cls)) {
                 const sig = cls as Signal<string>;
@@ -167,11 +167,11 @@ export class DomNode {
         return this;
     }
 
-    attribute(key: string, value: HtmlPropertyValue) {
+    attribute(key: string, value: HtmlPropertyValue): this {
         return this.attributes(key, value);
     }
 
-    attributes(...attributes: HtmlPropertyValue[]) {
+    attributes(...attributes: HtmlPropertyValue[]): this {
         if (arguments.length % 2 === 0) {
             for (let i = 0; i < arguments.length; i += 2) {
                 const key = arguments[i];
@@ -191,27 +191,27 @@ export class DomNode {
         return this;
     }
 
-    id(id: HtmlPropertyValue) {
+    id(id: HtmlPropertyValue): this {
         this.wrapProperty('id', id);
         return this;
     }
 
-    text(text: HtmlPropertyValue) {
+    text(text: HtmlPropertyValue): this {
         this.wrapProperty('innerText', text);
         return this;
     }
 
-    title(title: HtmlPropertyValue) {
+    title(title: HtmlPropertyValue): this {
         this.wrapProperty('title', title);
         return this;
     }
 
-    html(html: HtmlPropertyValue) {
+    html(html: HtmlPropertyValue): this {
         this.wrapProperty('innerHTML', html);
         return this;
     }
 
-    children(...children: (TypeOrSignal<DomNode>|TypeOrSignal<AnyElement>|TypeOrSignal<AnyNode>|null)[]) {
+    children(...children: (TypeOrSignal<DomNode>|TypeOrSignal<AnyElement>|TypeOrSignal<AnyNode>|null)[]): this {
         for (let node of arguments) {
             if (isValidElement(node)) {
                 this._node.appendChild(node);
@@ -248,371 +248,371 @@ export class DomNode {
         return this;
     }
 
-    overwriteChildren() {
+    overwriteChildren(): this {
         this._node.innerHTML = '';
         return this.children(...arguments);
     }
 
-    child() {
+    child(): this {
         return this.children(...arguments);
     }
 
-    role(role: HtmlPropertyValue) {
+    role(role: HtmlPropertyValue): this {
         this.wrapProperty('role', role);
         return this;
     }
 
-    prefixedAttribute(prefix: string, key: string, value: HtmlPropertyValue) {
+    prefixedAttribute(prefix: string, key: string, value: HtmlPropertyValue): this {
         return this.attributes(`${prefix}-${key}`, value);
     }
 
-    aria(key: string, value: HtmlPropertyValue) {
+    aria(key: string, value: HtmlPropertyValue): this {
         return this.prefixedAttribute('aria', key, value);
     }
 
-    data(key: string, value: HtmlPropertyValue) {
+    data(key: string, value: HtmlPropertyValue): this {
         return this.prefixedAttribute('data', key, value);
     }
 
-    onclick(callback: EventHandler<MouseEvent>) {
+    onclick(callback: EventHandler<MouseEvent>): this {
         // @ts-ignore
         this._node.onclick = callback;
         return this;
     }
 
-    onauxclick(callback: EventHandler<MouseEvent>) {
+    onauxclick(callback: EventHandler<MouseEvent>): this {
         // @ts-ignore
         this._node.onauxclick = callback;
         return this;
     }
 
-    ondblclick(callback: EventHandler<MouseEvent>) {
+    ondblclick(callback: EventHandler<MouseEvent>): this {
         // @ts-ignore
         this._node.ondblclick = callback;
         return this;
     }
 
-    onchange(callback: EventHandler<Event>) {
+    onchange(callback: EventHandler<Event>): this {
         // @ts-ignore
         this._node.onchange = callback;
         return this;
     }
 
-    oninput(callback: EventHandler<Event>) {
+    oninput(callback: EventHandler<Event>): this {
         // @ts-ignore
         this._node.oninput = callback;
         return this;
     }
 
-    onkeydown(callback: EventHandler<KeyboardEvent>) {
+    onkeydown(callback: EventHandler<KeyboardEvent>): this {
         // @ts-ignore
         this._node.onkeydown = callback;
         return this;
     }
 
-    onkeyup(callback: EventHandler<KeyboardEvent>) {
+    onkeyup(callback: EventHandler<KeyboardEvent>): this {
         // @ts-ignore
         this._node.onkeyup = callback;
         return this;
     }
 
-    onmousedown(callback: EventHandler<MouseEvent>) {
+    onmousedown(callback: EventHandler<MouseEvent>): this {
         // @ts-ignore
         this._node.onmousedown = callback;
         return this;
     }
 
-    onmouseup(callback: EventHandler<MouseEvent>) {
+    onmouseup(callback: EventHandler<MouseEvent>): this {
         // @ts-ignore
         this._node.onmouseup = callback;
         return this;
     }
 
-    onmouseover(callback: EventHandler<MouseEvent>) {
+    onmouseover(callback: EventHandler<MouseEvent>): this {
         // @ts-ignore
         this._node.onmouseover = callback;
         return this;
     }
 
-    onmouseout(callback: EventHandler<MouseEvent>) {
+    onmouseout(callback: EventHandler<MouseEvent>): this {
         // @ts-ignore
         this._node.onmouseout = callback;
         return this;
     }
 
-    onmousemove(callback: EventHandler<MouseEvent>) {
+    onmousemove(callback: EventHandler<MouseEvent>): this {
         // @ts-ignore
         this._node.onmousemove = callback;
         return this;
     }
 
-    onmouseenter(callback: EventHandler<MouseEvent>) {
+    onmouseenter(callback: EventHandler<MouseEvent>): this {
         // @ts-ignore
         this._node.onmouseenter = callback;
         return this;
     }
 
-    onmouseleave(callback: EventHandler<MouseEvent>) {
+    onmouseleave(callback: EventHandler<MouseEvent>): this {
         // @ts-ignore
         this._node.onmouseleave = callback;
         return this;
     }
 
-    oncontextmenu(callback: EventHandler<MouseEvent>) {
+    oncontextmenu(callback: EventHandler<MouseEvent>): this {
         // @ts-ignore
         this._node.oncontextmenu = callback;
         return this;
     }
 
-    onwheel(callback: EventHandler<MouseEvent>) {
+    onwheel(callback: EventHandler<MouseEvent>): this {
         // @ts-ignore
         this._node.onwheel = callback;
         return this;
     }
 
-    ondrag(callback: EventHandler<MouseEvent>) {
+    ondrag(callback: EventHandler<MouseEvent>): this {
         // @ts-ignore
         this._node.ondrag = callback;
         return this;
     }
 
-    ondragend(callback: EventHandler<MouseEvent>) {
+    ondragend(callback: EventHandler<MouseEvent>): this {
         // @ts-ignore
         this._node.ondragend = callback;
         return this;
     }
 
-    ondragenter(callback: EventHandler<MouseEvent>) {
+    ondragenter(callback: EventHandler<MouseEvent>): this {
         // @ts-ignore
         this._node.ondragenter = callback;
         return this;
     }
 
-    ondragstart(callback: EventHandler<MouseEvent>) {
+    ondragstart(callback: EventHandler<MouseEvent>): this {
         // @ts-ignore
         this._node.ondragstart = callback;
         return this;
     }
 
-    ondragleave(callback: EventHandler<MouseEvent>) {
+    ondragleave(callback: EventHandler<MouseEvent>): this {
         // @ts-ignore
         this._node.ondragleave = callback;
         return this;
     }
 
-    ondragover(callback: EventHandler<MouseEvent>) {
+    ondragover(callback: EventHandler<MouseEvent>): this {
         // @ts-ignore
         this._node.ondragover = callback;
         return this;
     }
 
-    ondrop(callback: EventHandler<MouseEvent>) {
+    ondrop(callback: EventHandler<MouseEvent>): this {
         // @ts-ignore
         this._node.ondrop = callback;
         return this;
     }
 
-    onscroll(callback: EventListener) {
+    onscroll(callback: EventListener): this {
         this._node.onscroll = callback;
         return this;
     }
 
-    onfocus(callback: EventListener) {
+    onfocus(callback: EventListener): this {
         this._node.onfocus = callback;
         return this;
     }
 
-    onblur(callback: EventListener) {
+    onblur(callback: EventListener): this {
         this._node.onblur = callback;
         return this;
     }
 
-    onresize(callback: EventListener) {
+    onresize(callback: EventListener): this {
         this._node.onresize = callback;
         return this;
     }
 
-    onselect(callback: EventListener) {
+    onselect(callback: EventListener): this {
         this._node.onselect = callback;
         return this;
     }
 
-    onsubmit(callback: EventListener) {
+    onsubmit(callback: EventListener): this {
         this._node.onsubmit = callback;
         return this;
     }
 
-    onreset(callback: EventListener) {
+    onreset(callback: EventListener): this {
         this._node.onreset = callback;
         return this;
     }
 
-    onabort(callback: EventListener) {
+    onabort(callback: EventListener): this {
         this._node.onabort = callback;
         return this;
     }
 
-    onerror(callback: OnErrorEventHandler) {
+    onerror(callback: OnErrorEventHandler): this {
         this._node.onerror = callback;
         return this;
     }
 
-    oncanplay(callback: EventListener) {
+    oncanplay(callback: EventListener): this {
         this._node.oncanplay = callback;
         return this;
     }
 
-    oncanplaythrough(callback: EventListener) {
+    oncanplaythrough(callback: EventListener): this {
         this._node.oncanplaythrough = callback;
         return this;
     }
 
-    ondurationchange(callback: EventListener) {
+    ondurationchange(callback: EventListener): this {
         this._node.ondurationchange = callback;
         return this;
     }
 
-    onemptied(callback: EventListener) {
+    onemptied(callback: EventListener): this {
         this._node.onemptied = callback;
         return this;
     }
 
-    onended(callback: EventListener) {
+    onended(callback: EventListener): this {
         this._node.onended = callback;
         return this;
     }
 
-    onloadeddata(callback: EventListener) {
+    onloadeddata(callback: EventListener): this {
         this._node.onloadeddata = callback;
         return this;
     }
 
-    onloadedmetadata(callback: EventListener) {
+    onloadedmetadata(callback: EventListener): this {
         this._node.onloadedmetadata = callback;
         return this;
     }
 
-    onloadstart(callback: EventListener) {
+    onloadstart(callback: EventListener): this {
         this._node.onloadstart = callback;
         return this;
     }
 
-    onpause(callback: EventListener) {
+    onpause(callback: EventListener): this {
         this._node.onpause = callback;
         return this;
     }
 
-    onplay(callback: EventListener) {
+    onplay(callback: EventListener): this {
         this._node.onplay = callback;
         return this;
     }
 
-    onplaying(callback: EventListener) {
+    onplaying(callback: EventListener): this {
         this._node.onplaying = callback;
         return this;
     }
 
-    onprogress(callback: EventListener) {
+    onprogress(callback: EventListener): this {
         this._node.onprogress = callback;
         return this;
     }
 
-    onratechange(callback: EventListener) {
+    onratechange(callback: EventListener): this {
         this._node.onratechange = callback;
         return this;
     }
 
-    onseeked(callback: EventListener) {
+    onseeked(callback: EventListener): this {
         this._node.onseeked = callback;
         return this;
     }
 
-    onseeking(callback: EventListener) {
+    onseeking(callback: EventListener): this {
         this._node.onseeking = callback;
         return this;
     }
 
-    onstalled(callback: EventListener) {
+    onstalled(callback: EventListener): this {
         this._node.onstalled = callback;
         return this;
     }
 
-    onsuspend(callback: EventListener) {
+    onsuspend(callback: EventListener): this {
         this._node.onsuspend = callback;
         return this;
     }
 
-    ontimeupdate(callback: EventListener) {
+    ontimeupdate(callback: EventListener): this {
         this._node.ontimeupdate = callback;
         return this;
     }
 
-    onvolumechange(callback: EventListener) {
+    onvolumechange(callback: EventListener): this {
         this._node.onvolumechange = callback;
         return this;
     }
 
-    onwaiting(callback: EventListener) {
+    onwaiting(callback: EventListener): this {
         this._node.onwaiting = callback;
         return this;
     }
 
-    oncopy(callback: EventListener) {
+    oncopy(callback: EventListener): this {
         this._node.oncopy = callback;
         return this;
     }
 
-    oncut(callback: EventListener) {
+    oncut(callback: EventListener): this {
         this._node.oncut = callback;
         return this;
     }
 
-    onpaste(callback: EventListener) {
+    onpaste(callback: EventListener): this {
         this._node.onpaste = callback;
         return this;
     }
 
-    onanimationstart(callback: EventListener) {
+    onanimationstart(callback: EventListener): this {
         this._node.onanimationstart = callback;
         return this;
     }
 
-    onanimationend(callback: EventListener) {
+    onanimationend(callback: EventListener): this {
         this._node.onanimationend = callback;
         return this;
     }
 
-    onanimationiteration(callback: EventListener) {
+    onanimationiteration(callback: EventListener): this {
         this._node.onanimationiteration = callback;
         return this;
     }
 
-    ontransitionend(callback: EventListener) {
+    ontransitionend(callback: EventListener): this {
         this._node.ontransitionend = callback;
         return this;
     }
 
-    on(eventName: string, callback: EventListenerOrEventListenerObject) {
+    on(eventName: string, callback: EventListenerOrEventListenerObject): this {
         this._node.addEventListener(eventName, callback);
         return this;
     }
 
-    open(open: HtmlPropertyValue) {
+    open(open: HtmlPropertyValue): this {
         this.wrapProperty('open', open);
         return this;
     }
 
-    src(src: HtmlPropertyValue) {
+    src(src: HtmlPropertyValue): this {
         this.wrapProperty('src', src);
         return this;
     }
 
-    alt(alt: HtmlPropertyValue) {
+    alt(alt: HtmlPropertyValue): this {
         this.wrapProperty('alt', alt);
         return this;
     }
 
-    css(css: CssClass) {
+    css(css: CssClass): this {
         if (!css) {
             return this;
         }
@@ -622,11 +622,11 @@ export class DomNode {
         return this;
     }
 
-    style(key: string, value: StringOrSignal) {
+    style(key: string, value: StringOrSignal): this {
         return this.styles(key, value);
     }
 
-    styles(...styles: StringOrSignal[]) {
+    styles(...styles: StringOrSignal[]): this {
         if (arguments.length % 2 === 0) {
             for (let i = 0; i < arguments.length; i += 2) {
                 const key = arguments[i];
@@ -652,118 +652,118 @@ export class DomNode {
         return this;
     }
 
-    width(width: HtmlPropertyValue) {
+    width(width: HtmlPropertyValue): this {
         this.wrapProperty('width', width);
         return this;
     }
 
-    height(height: HtmlPropertyValue) {
+    height(height: HtmlPropertyValue): this {
         this.wrapProperty('height', height);
         return this;
     }
 
-    type(type: TypeOrSignal<InputType>) {
+    type(type: TypeOrSignal<InputType>): this {
         // @ts-ignore
         this.wrapProperty('type', type);
         return this;
     }
 
-    name(name: HtmlPropertyValue) {
+    name(name: HtmlPropertyValue): this {
         this.wrapProperty('name', name);
         return this;
     }
 
-    value(value: HtmlPropertyValue) {
+    value(value: HtmlPropertyValue): this {
         this.wrapProperty('value', value);
         return this;
     }
 
-    placeholder(placeholder: HtmlPropertyValue) {
+    placeholder(placeholder: HtmlPropertyValue): this {
         this.wrapProperty('placeholder', placeholder);
         return this;
     }
 
-    for(forId: HtmlPropertyValue) {
+    for(forId: HtmlPropertyValue): this {
         this.wrapProperty('for', forId);
         return this;
     }
 
-    checked(checked: HtmlPropertyValue) {
+    checked(checked: HtmlPropertyValue): this {
         this.wrapProperty('checked', checked);
         return this;
     }
 
-    disabled(disabled: HtmlPropertyValue) {
+    disabled(disabled: HtmlPropertyValue): this {
         this.wrapProperty('disabled', disabled);
         return this;
     }
 
-    selected(selected: HtmlPropertyValue) {
+    selected(selected: HtmlPropertyValue): this {
         this.wrapProperty('selected', selected);
         return this;
     }
 
-    href(href: HtmlPropertyValue) {
+    href(href: HtmlPropertyValue): this {
         this.wrapProperty('href', href);
         return this;
     }
 
-    target(target: HtmlPropertyValue) {
+    target(target: HtmlPropertyValue): this {
         this.wrapProperty('target', target);
         return this;
     }
 
-    rel(rel: HtmlPropertyValue) {
+    rel(rel: HtmlPropertyValue): this {
         this.wrapProperty('rel', rel);
         return this;
     }
 
-    required(required: HtmlPropertyValue) {
+    required(required: HtmlPropertyValue): this {
         this.wrapProperty('required', required);
         return this;
     }
 
-    multiple(multiple: HtmlPropertyValue) {
+    multiple(multiple: HtmlPropertyValue): this {
         this.wrapProperty('multiple', multiple);
         return this;
     }
 
-    accept(accept: HtmlPropertyValue) {
+    accept(accept: HtmlPropertyValue): this {
         this.wrapProperty('accept', accept);
         return this;
     }
 
-    acceptCharset(acceptCharset: HtmlPropertyValue) {
+    acceptCharset(acceptCharset: HtmlPropertyValue): this {
         this.wrapProperty('acceptCharset', acceptCharset);
         return this;
     }
 
-    action(action: HtmlPropertyValue) {
+    action(action: HtmlPropertyValue): this {
         this.wrapProperty('action', action);
         return this;
     }
 
-    autocomplete(autocomplete: HtmlPropertyValue) {
+    autocomplete(autocomplete: HtmlPropertyValue): this {
         this.wrapProperty('autocomplete', autocomplete);
         return this;
     }
 
-    enctype(enctype: HtmlPropertyValue) {
+    enctype(enctype: HtmlPropertyValue): this {
         this.wrapProperty('enctype', enctype);
         return this;
     }
 
-    method(method: HtmlPropertyValue) {
+    method(method: HtmlPropertyValue): this {
         this.wrapProperty('method', method);
         return this;
     }
 
-    novalidate(novalidate: HtmlPropertyValue) {
+    novalidate(novalidate: HtmlPropertyValue): this {
         this.wrapProperty('novalidate', novalidate);
         return this;
     }
 
-    popover(popover?: TypeOrSignal<"auto"|"hint"|"manual"|"">) {
+    popover(popover?: TypeOrSignal<"auto"|"hint"|"manual"|"">): this {
         this.wrapProperty('popover', popover as HtmlPropertyValue);
         return this;
     }
