@@ -1,3 +1,6 @@
+/**
+ * HTML input types supported by {@link DomNode} helpers.
+ */
 export enum InputType {
     button = "button",
     checkbox = "checkbox",

@@ -1,12 +1,21 @@
 import {isSignal, signal, Signal} from "./signals.ts";
 import type {InputType} from "./InputType.ts";
 
+/**
+ * A plain value of type `T` or a {@link Signal} containing `T`.
+ */
 export type TypeOrSignal<T> = T | Signal<T>;
+/** A `string` or a {@link Signal} of `string`. */
 export type StringOrSignal = TypeOrSignal<string>;
+/** Value types accepted by DOM attribute/style setters, plain or signal-wrapped. */
 export type HtmlPropertyValue = StringOrSignal | TypeOrSignal<number | boolean | null | undefined>;
+/** Generic DOM event handler type. */
 export type EventHandler<T> = ((this: GlobalEventHandlers, ev: T) => any) | Function | undefined;
+/** Union of HTML and SVG elements. */
 export type AnyElement = HTMLElement | SVGElement;
+/** A {@link DomNode} builder or a concrete DOM element. */
 export type AnyNode = DomNode | AnyElement;
+/** Function that creates an element on demand. */
 export type AnyElementFactory = () => AnyElement;
 
 type propertyOmissions = Omit<CSSStyleDeclaration, "cssText" | "cssFloat">;
@@ -14,19 +23,35 @@ type StringKeys<T> = {
     [K in keyof T]: T[K] extends string ? K : never;
 }[keyof T];
 type stringProperties = StringKeys<propertyOmissions>;
+/**
+ * Subset of CSS properties on `CSSStyleDeclaration` that accept string values and can be set.
+ */
 export type SettableCss = {
     [K in stringProperties]: StringOrSignal
 };
+/** Convenience type representing a partial set of CSS properties. */
 export type CssClass = Partial<SettableCss>;
 
+/**
+ * Create a {@link DomNode} builder for the given tag name (HTML or SVG).
+ */
 export function create(tag: string): DomNode {
     return new DomNode(tag);
 }
 
+/**
+ * Create a `div` element that is visually hidden (`display: none`).
+ */
 export function nullElement(): HTMLElement | SVGElement {
     return create("div").styles("display", "none").build();
 }
 
+/**
+ * Conditionally render an element or a lazily-created element.
+ * - If `condition` is a boolean, returns the element or a `nullElement()` depending on truthiness.
+ * - If `condition` is a signal, returns a signal that updates the element accordingly.
+ * @param inverted If true, inverts the condition.
+ */
 export function when(condition: any, element: AnyElement | AnyElementFactory, inverted = false): HTMLElement | SVGElement | Signal<HTMLElement | SVGElement> {
     function getElement(): AnyElement {
         if (element.constructor === Function) {
@@ -50,8 +75,14 @@ export function when(condition: any, element: AnyElement | AnyElementFactory, in
     }
 }
 
+/** Callback mapping an item to an element for {@link signalMap}. */
 export type SignalMapCallback<T> = (item: T, index: number) => AnyElement;
 
+/**
+ * Render a list by mapping items from a signal array to DOM children of a wrapper node.
+ * Updates when the array signal changes.
+ * @param renderSequentially If true, updates the DOM incrementally per item; otherwise overwrites children in batches.
+ */
 export function signalMap<T>(arrayState: Signal<T[]>, wrapper: DomNode, callback: SignalMapCallback<T>, renderSequentially = false): any {
     if (!arrayState.subscribe) {
         throw new Error("arrayState argument for signalMap is not a signal");
@@ -82,15 +113,24 @@ export function signalMap<T>(arrayState: Signal<T[]>, wrapper: DomNode, callback
     return wrapper.build();
 }
 
+/**
+ * Log a warning with a stack trace and optional debug info.
+ */
 export function stack(message: string, debugInfo = {}): void {
     console.warn(message, { debugInfo }, (new Error()).stack);
 }
 
+/**
+ * Check if the provided value is an HTML or SVG element instance.
+ */
 export function isValidElement(element: any): boolean {
     const validTypes = [HTMLElement, SVGElement];
     return validTypes.some(type => element instanceof type);
 }
 
+/**
+ * Extract the raw value from a {@link Signal} or return the value as-is if not a signal.
+ */
 export function getValue<T>(maybeSignal: Signal<T>|T): T {
     if (maybeSignal instanceof Signal) {
         return (maybeSignal as Signal<T>).value;
@@ -102,6 +142,10 @@ type AnyElementWithKeyIndex = AnyElement & {
     [key: string]: HtmlPropertyValue
 };
 
+/**
+ * Fluent builder for creating and configuring DOM nodes (HTML or SVG).
+ * Methods support either raw values or signals for reactive updates.
+ */
 export class DomNode {
     _node: AnyElementWithKeyIndex;
     svgTags = ['svg', 'g', 'circle', 'ellipse', 'line', 'path', 'polygon', 'polyline', 'rect', 'text', 'textPath', 'tspan'];

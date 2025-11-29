@@ -1,3 +1,7 @@
+/**
+ * Mapping used by {@link Signal#boolValues} to derive dependent boolean-based signals.
+ * For each key, provide values to emit when the source signal is true or false.
+ */
 export interface BoolValueAssignments<T> {
     [key: string]: {
         onTrue: T,
@@ -5,8 +9,18 @@ export interface BoolValueAssignments<T> {
     }
 }
 
+/**
+ * Callback invoked when a {@link Signal} updates.
+ * @template T Type of the signal's value.
+ * @param newValue The new value assigned to the signal.
+ * @param changed Whether the new value is different from the previous one (strict inequality).
+ */
 export type SignalCallback<T> = (newValue: T, changed: boolean) => void;
 
+/**
+ * A minimal reactive value container with subscribe/unsubscribe, inspired by signals.
+ * Subscribers are notified whenever the value is set; they also receive a flag indicating if it changed.
+ */
 export class Signal<T> {
     _callbacks: SignalCallback<T>[] = [];
     _keyCallbacks: Map<string, SignalCallback<T>> = new Map();
@@ -14,14 +28,19 @@ export class Signal<T> {
     _values: { [key: string]: Signal<T> } = {};
     public readonly type = "jess-signal";
 
+    /**
+     * Create a new signal.
+     * @param initialValue Initial value for the signal.
+     */
     constructor(initialValue: T) {
         this._value = initialValue;
         this._values = {};
     }
 
     /**
-     * Creates an object with boolean signals that update when {this} updates.
-     * @param assignments {Object} e.g. { someKey: { onTrue: value1, onFalse: value2 } }
+     * Creates an object with signals whose values depend on this signal interpreted as boolean.
+     * Example: `{ someKey: { onTrue: value1, onFalse: value2 } }`.
+     * @param assignments Keyed configuration describing values for true/false cases.
      */
     boolValues(assignments: BoolValueAssignments<T> = {}): { [p: string]: Signal<T> } {
         for (let key in assignments) {
@@ -39,10 +58,18 @@ export class Signal<T> {
         return this._values;
     }
 
+    /**
+     * Remove all non-keyed subscribers from this signal.
+     */
     unsubscribeAll() {
         this._callbacks = [];
     }
 
+    /**
+     * Subscribe to updates.
+     * @param callback Function invoked with the new value and a changed flag.
+     * @param key Optional unique key. If provided, it replaces any previous callback stored under the same key.
+     */
     subscribe(callback: SignalCallback<T>, key?: string|null) {
         if (key !== undefined && key !== null) {
             this._keyCallbacks.set(key, callback);
@@ -51,6 +78,10 @@ export class Signal<T> {
         }
     }
 
+    /**
+     * Unsubscribe a previously registered callback (keyed or unkeyed).
+     * @param callback The same function reference passed to {@link subscribe}.
+     */
     unsubscribe(callback: SignalCallback<T>) {
         const index = this._callbacks.indexOf(callback);
         if (index >= 0) {
@@ -64,14 +95,24 @@ export class Signal<T> {
         }
     }
 
+    /**
+     * Unsubscribe a callback registered with a specific key.
+     * @param key The subscription key used when subscribing.
+     */
     unsubscribeKey(key: string) {
         this._keyCallbacks.delete(key);
     }
 
+    /**
+     * Current value of the signal.
+     */
     get value(): T {
         return this._value;
     }
 
+    /**
+     * Assign a new value to the signal and notify subscribers.
+     */
     set value(value: T) {
         const changed = this._value !== value;
         this._value = value;
@@ -82,16 +123,27 @@ export class Signal<T> {
         }
     }
 
+    /**
+     * String representation of the underlying value.
+     */
     toString(): string {
         // @ts-ignore
         return this._value.toString();
     }
 }
 
+/**
+ * Convenience helper to create a {@link Signal}.
+ * @param initialValue Initial value for the signal.
+ */
 export function signal<T>(initialValue: T): Signal<T> {
     return new Signal<T>(initialValue);
 }
 
+/**
+ * Compute a derived signal from other signals synchronously.
+ * The output updates whenever any input signal changes to a different value.
+ */
 export function compute<T, Args extends any[]>(
     valueFunction: (...args: Args) => T,
     ...signals: { [K in keyof Args]: Signal<Args[K]> }
@@ -110,6 +162,10 @@ export function compute<T, Args extends any[]>(
     return out;
 }
 
+/**
+ * Compute a derived signal from other signals asynchronously.
+ * The output updates whenever any input signal changes and awaits the async function.
+ */
 export async function computeAsync<T, Args extends any[]>(
     valueFunction: (...args: Args) => Promise<T>,
     ...signals: { [K in keyof Args]: Signal<Args[K]> }
@@ -128,10 +184,16 @@ export async function computeAsync<T, Args extends any[]>(
     return out;
 }
 
+/**
+ * Runtime check whether an object appears to be a {@link Signal} created by this module.
+ */
 export function isSignal(obj: any): boolean {
     return obj?.type === "jess-signal";
 }
 
+/**
+ * Ensure a value is wrapped as a {@link Signal}. If it's already a signal, return it; otherwise wrap it.
+ */
 export function asSignal<T>(obj: T|Signal<T>): Signal<Signal<T> | T> | Signal<T> {
     if (!isSignal(obj)) {
         return signal(obj);
