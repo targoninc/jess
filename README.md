@@ -1,5 +1,13 @@
 # Getting started
 
+## Install
+
+| Package manager | Command                  |
+|-----------------|--------------------------|
+| bun             | `bun i @targoninc/jess`  |
+| pnpm            | `pnpm i @targoninc/jess` |
+| npm             | `npm i @targoninc/jess`  |
+
 ## Create your first template
 
 ```typescript
