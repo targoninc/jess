@@ -12,7 +12,7 @@
     "url": "git+https://github.com/targoninc/jess.git"
   },
   "scripts": {
-    "build": "bun build ./src/index.ts --outdir ./dist --target bun --format esm --root ./src && tsc",
+    "build": "tsc && bun build ./src/jess/*.ts --outdir ./dist --target node --format esm --root ./src",
     "typecheck": "tsc --noEmit",
     "prepublishOnly": "bun run build"
   },
