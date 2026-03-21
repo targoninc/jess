@@ -198,14 +198,15 @@ export class DomNode {
             if (cls && isSignal(cls)) {
                 const sig = cls as Signal<string>;
                 let previousValue = sig.value as string;
-                this._node.classList.add(previousValue);
+                this._node.classList.add(previousValue === "" ? "_" : previousValue);
                 sig.subscribe((newValue: string) => {
                     this._node.classList.remove(previousValue);
-                    this._node.classList.add(newValue);
+                    this._node.classList.remove("_");
+                    this._node.classList.add(newValue === "" ? "_" : newValue);
                     previousValue = newValue;
                 });
             } else {
-                this._node.classList.add(cls as string);
+                this._node.classList.add((cls as string) === "" ? "_" : cls as string);
             }
         }
         return this;
