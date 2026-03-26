@@ -200,7 +200,7 @@ export class DomNode {
                 let previousValue = sig.value as string;
                 this._node.classList.add(previousValue === "" ? "_" : previousValue);
                 sig.subscribe((newValue: string) => {
-                    this._node.classList.remove(previousValue);
+                    this._node.classList.remove(previousValue === "" ? "_" : previousValue);
                     this._node.classList.remove("_");
                     this._node.classList.add(newValue === "" ? "_" : newValue);
                     previousValue = newValue;
