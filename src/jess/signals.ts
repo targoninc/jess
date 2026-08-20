@@ -183,7 +183,6 @@ export class Signal<T> {
      */
     _onFirstSubscriber?: () => void;
     public readonly type = "jess-signal";
-
     /**
      * Create a new signal.
      * @param initialValue Initial value for the signal.
@@ -250,6 +249,19 @@ export class Signal<T> {
         if (wasEmpty && this._onFirstSubscriber) {
             this._onFirstSubscriber();
         }
+    }
+
+    /**
+     * Registers a callback invoked whenever this signal loses its last
+     * subscriber. Use it to release resources tied to the signal's consumers
+     * (timers, observers, subscriptions), e.g. a live-updating label whose
+     * bound element left the document. The callback fires again on each
+     * 0 → 1 → 0 transition if the signal is re-subscribed later.
+     * @param callback Invoked when the subscriber count drops to zero.
+     */
+    onNoSubscribers(callback: () => void): this {
+        this._prune = callback;
+        return this;
     }
 
     /**
