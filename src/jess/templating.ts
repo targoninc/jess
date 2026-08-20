@@ -1,4 +1,4 @@
-import {isSignal, signal, Signal} from "./signals.ts";
+import {isSignal, signal, Signal, trackNodeBoundSub} from "./signals.ts";
 import type {InputType} from "./InputType.ts";
 
 /**
@@ -62,13 +62,31 @@ export function when(condition: any, element: AnyElement | AnyElementFactory, in
 
     if (condition && isSignal(condition)) {
         const state = signal(condition.value ? (inverted ? nullElement() : getElement()) : (inverted ? getElement() : nullElement()));
-        condition.subscribe((newValue: any) => {
+        let lastTruthy = !!condition.value;
+        const onCondition = (newValue: any) => {
+            const truthy = !!newValue;
+            // Only rebuild when the condition actually flips. Signals are
+            // reassigned to fresh values with identical truthiness all the
+            // time; rebuilding (and dropping the previous element's live
+            // subscriptions) on every assignment would churn the DOM.
+            if (truthy === lastTruthy) {
+                return;
+            }
+            lastTruthy = truthy;
             if (newValue) {
                 state.value = inverted ? nullElement() : getElement();
             } else {
                 state.value = inverted ? getElement() : nullElement();
             }
-        });
+        };
+        condition.subscribe(onCondition);
+        // When the state signal loses its last consumer, the `when` is no
+        // longer observed: detach it from the condition so the conditional
+        // element (and its subscriptions) can be collected.
+        state._prune = () => {
+            state._prune = undefined;
+            condition.unsubscribe(onCondition);
+        };
         return state;
     } else {
         return condition ? (inverted ? nullElement() : getElement()) : (inverted ? getElement() : nullElement());
@@ -108,6 +126,7 @@ export function signalMap<T>(arrayState: Signal<T[]>, wrapper: DomNode, callback
         }
     };
     arrayState.subscribe(update);
+    trackNodeBoundSub(arrayState, update, wrapper._node);
     update(arrayState.value);
 
     return wrapper.build();
@@ -179,9 +198,11 @@ export class DomNode {
         if (value && isSignal(value)) {
             const sig = value as Signal<string>;
             this._node[property] = sig.value;
-            sig.subscribe((newValue: HtmlPropertyValue) => {
+            const callback = (newValue: HtmlPropertyValue) => {
                 this._node[property] = newValue;
-            });
+            };
+            sig.subscribe(callback);
+            trackNodeBoundSub(sig, callback, this._node);
         } else {
             if (value !== undefined && value !== null) {
                 this._node[property] = value;
@@ -198,13 +219,15 @@ export class DomNode {
             if (cls && isSignal(cls)) {
                 const sig = cls as Signal<string>;
                 let previousValue = sig.value as string;
-                this._node.classList.add(previousValue === "" ? "_" : previousValue);
-                sig.subscribe((newValue: string) => {
+                const callback = (newValue: string) => {
                     this._node.classList.remove(previousValue === "" ? "_" : previousValue);
                     this._node.classList.remove("_");
                     this._node.classList.add(newValue === "" ? "_" : newValue);
                     previousValue = newValue;
-                });
+                };
+                this._node.classList.add(previousValue === "" ? "_" : previousValue);
+                sig.subscribe(callback);
+                trackNodeBoundSub(sig, callback, this._node);
             } else {
                 this._node.classList.add((cls as string) === "" ? "_" : cls as string);
             }
@@ -223,9 +246,11 @@ export class DomNode {
                 const value = arguments[i + 1];
                 if (value && isSignal(value)) {
                     this._node.setAttribute(key, value.value);
-                    value.subscribe((newValue: string) => {
+                    const callback = (newValue: string) => {
                         this._node.setAttribute(key, newValue);
-                    });
+                    };
+                    value.subscribe(callback);
+                    trackNodeBoundSub(value, callback, this._node);
                 } else {
                     this._node.setAttribute(key, value);
                 }
@@ -263,7 +288,7 @@ export class DomNode {
             } else if (node instanceof DomNode) {
                 this._node.appendChild(node.build());
             } else if (node && isSignal(node)) {
-                node.subscribe((newValue: AnyNode) => {
+                const callback = (newValue: AnyNode) => {
                     if (isValidElement(newValue)) {
                         this._node.replaceChild(newValue as AnyElement, childNode);
                         childNode = newValue;
@@ -273,7 +298,9 @@ export class DomNode {
                     } else {
                         stack('Unexpected value for child. Must be an HTMLElement or a subclass.', newValue);
                     }
-                });
+                };
+                node.subscribe(callback);
+                trackNodeBoundSub(node, callback, this._node);
                 let childNode = node.value;
                 if (!isValidElement(childNode)) {
                     // Create a placeholder div if the value is not an HTMLElement so we can swap it out later
@@ -682,10 +709,12 @@ export class DomNode {
                 if (value && isSignal(value)) {
                     // @ts-ignore
                     this._node.style[key] = value.value;
-                    value.subscribe((newValue: any) => {
+                    const callback = (newValue: any) => {
                         // @ts-ignore
                         this._node.style[key] = newValue;
-                    });
+                    };
+                    value.subscribe(callback);
+                    trackNodeBoundSub(value, callback, this._node);
                 } else {
                     // @ts-ignore
                     this._node.style[key] = value;
