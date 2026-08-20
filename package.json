@@ -1,7 +1,7 @@
 {
   "name": "@targoninc/jess",
   "type": "module",
-  "version": "0.0.36",
+  "version": "0.0.37",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
   "files": [
