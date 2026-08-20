@@ -1,6 +1,7 @@
 {
   "exclude": [
-    "scripts"
+    "scripts",
+    "dist"
   ],
   "compilerOptions": {
     // Environment setup & latest features
