@@ -28,7 +28,17 @@ interface NodeBoundSubscription {
     callback: SignalCallback<any>;
     key?: string;
     node: HTMLElement | SVGElement;
+    /** When `node` was first observed disconnected, for grace-based pruning. */
+    disconnectedSince?: number;
 }
+
+/**
+ * Detached bindings are only pruned once they have been disconnected for at
+ * least this long. Content that is *temporarily* detached (loading gates,
+ * hidden tabs, conditional sections that reattach on a signal flip) must keep
+ * its bindings alive; only truly abandoned subtrees should be released.
+ */
+const DETACH_GRACE_MS = 5 * 60 * 1000;
 
 /**
  * Element-bound subscriptions grouped by signal. `Signal.set` prunes the
@@ -93,9 +103,16 @@ export function untrackNodeBoundSub<T>(signal: Signal<T>, callback: SignalCallba
  * the document. Called by the sweep interval and exported for callers that
  * want immediate cleanup (e.g. before wiping a page container).
  */
-export function sweepDetachedSubscriptions(): void {
+/**
+ * Drops node-bound subscriptions whose node left the document.
+ * @param immediate When true, detached bindings are released right away
+ * (for callers that know the detached subtree is garbage, e.g. after a page
+ * container is emptied). Otherwise a grace period applies so temporarily
+ * detached content (loading gates, hidden tabs) keeps its bindings.
+ */
+export function sweepDetachedSubscriptions(immediate = false): void {
     for (const signal of [...nodeBoundSubs.keys()]) {
-        pruneNodeBoundSubs(signal);
+        pruneNodeBoundSubs(signal, immediate);
     }
 }
 
@@ -110,16 +127,30 @@ function ensureSweepInterval(): void {
 
 /**
  * Removes the node-bound subscriptions of `signal` whose node is detached.
+ * Unless `immediate` is set, nodes must have been disconnected for at least
+ * {@link DETACH_GRACE_MS} before their bindings are released, so temporarily
+ * detached (loading-gated / hidden-tab) content keeps working.
  * @internal
  */
-export function pruneNodeBoundSubs<T>(signal: Signal<T>): number {
+export function pruneNodeBoundSubs<T>(signal: Signal<T>, immediate = false): number {
     const subs = nodeBoundSubs.get(signal);
     if (!subs) {
         return 0;
     }
+    const now = Date.now();
     const dead: NodeBoundSubscription[] = [];
     for (const sub of subs) {
-        if (!sub.node.isConnected) {
+        if (sub.node.isConnected) {
+            sub.disconnectedSince = undefined;
+            continue;
+        }
+        if (immediate) {
+            dead.push(sub);
+            continue;
+        }
+        if (sub.disconnectedSince === undefined) {
+            sub.disconnectedSince = now;
+        } else if (now - sub.disconnectedSince >= DETACH_GRACE_MS) {
             dead.push(sub);
         }
     }
